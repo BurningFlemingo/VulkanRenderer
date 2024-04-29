@@ -1,0 +1,132 @@
+{
+  "$schema": "https://raw.githubusercontent.com/spdx/spdx-spec/v2.2.1/schemas/spdx-schema.json",
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "documentNamespace": "https://spdx.org/spdxdocs/vulkan-memory-allocator-x64-linux-3.0.1#4-32c7b1cf-f5aa-4f1e-949a-9a201735e9d2",
+  "name": "vulkan-memory-allocator:x64-linux@3.0.1#4 899cd6cafe3b6813fe54c2caaa9116dc7807a851f04816e4314990a590a7e470",
+  "creationInfo": {
+    "creators": [
+      "Tool: vcpkg-8a83681f921b10d86ae626fd833c253f4f8c355b"
+    ],
+    "created": "2024-03-11T13:03:43Z"
+  },
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "GENERATES",
+      "relatedSpdxElement": "SPDXRef-binary"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-0"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-1"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-2"
+    },
+    {
+      "spdxElementId": "SPDXRef-binary",
+      "relationshipType": "GENERATED_FROM",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-0",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-2",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    }
+  ],
+  "packages": [
+    {
+      "name": "vulkan-memory-allocator",
+      "SPDXID": "SPDXRef-port",
+      "versionInfo": "3.0.1#4",
+      "downloadLocation": "NOASSERTION",
+      "homepage": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "description": "Easy to integrate Vulkan memory allocation library from GPUOpen",
+      "comment": "This is the port (recipe) consumed by vcpkg."
+    },
+    {
+      "name": "vulkan-memory-allocator:x64-linux",
+      "SPDXID": "SPDXRef-binary",
+      "versionInfo": "899cd6cafe3b6813fe54c2caaa9116dc7807a851f04816e4314990a590a7e470",
+      "downloadLocation": "NONE",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-1",
+      "name": "GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+      "downloadLocation": "git+https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator@2a28bc4b39b9b80dad909036442f629f570d7ae1",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "cd83efc357171a5fd1ac65a566d1bf828f7de2b4c97adec92aaaf9cdfedf5a5525de3bd6eb84c453d1cd952c10c3542e6502ad4307a55b61690ce92b80dc4e2f"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "fileName": ".//home/unmeinks/Workspace/Dev/Projects/PyxEngine/vendor/vcpkg/ports/vulkan-memory-allocator/usage",
+      "SPDXID": "SPDXRef-file-0",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "644d64c457a8c334e26cab0619593bcdaf5d53bf0e2669085169d03d0a4fa2f1"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": ".//home/unmeinks/Workspace/Dev/Projects/PyxEngine/vendor/vcpkg/ports/vulkan-memory-allocator/portfile.cmake",
+      "SPDXID": "SPDXRef-file-1",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "d20e8c2c088b3897796a227d5183bbb2806ccbe759d9f4fff609db35d3cdefc7"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": ".//home/unmeinks/Workspace/Dev/Projects/PyxEngine/vendor/vcpkg/ports/vulkan-memory-allocator/vcpkg.json",
+      "SPDXID": "SPDXRef-file-2",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "3febb37f14307de9e27c46562762251894df65a822e2f2b3b2bda3b404ccc5e7"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ]
+}
