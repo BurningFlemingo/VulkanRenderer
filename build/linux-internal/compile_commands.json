@@ -1,0 +1,68 @@
+[
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Renderer.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Renderer.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Renderer.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Renderer.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Extensions.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Extensions.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Extensions.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Extensions.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Logger.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Logger.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Logger.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Logger.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Instance.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Instance.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Instance.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Instance.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Main.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Main.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Main.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Main.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/DeletionQueue.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/DeletionQueue.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/DeletionQueue.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/DeletionQueue.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Device.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Device.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Device.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Device.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Swapchain.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Swapchain.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Swapchain.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Swapchain.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Memory.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Memory.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Memory.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Memory.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Commands.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Commands.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Commands.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Commands.cpp.o"
+},
+{
+  "directory": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal",
+  "command": "/usr/bin/g++ -DINTERNAL_BUILD -DLOG_LEVEL_WARNING -DPYX_BUILD_PYXENGINE -DSPDLOG_FMT_EXTERNAL -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src -I/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/vendor -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include -isystem /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/vcpkg_installed/x64-linux/include/SDL2 -DPYX_PLATFORM_LINUX -O2 -g -DNDEBUG -std=gnu++23 -o CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Layers.cpp.o -c /home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Layers.cpp",
+  "file": "/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/VulkanRenderer/src/Layers.cpp",
+  "output": "CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Layers.cpp.o"
+}
+]

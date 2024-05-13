@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include <algorithm>
+#include <array>
 
 #include "Logger.h"
 #include "DeletionQueue.h"
@@ -26,6 +27,14 @@ struct Vertex {
 	glm::vec3 color;
 };
 
+struct FrameState {
+	VkFence renderFinishFence;
+	VkSemaphore renderFinishSemaphore;
+	VkSemaphore imageAvaliableSemaphore;
+
+	VkCommandBuffer cmdBuffer;
+};
+
 namespace {
 	struct VulkanState {
 		VkInstance instance;
@@ -39,7 +48,6 @@ namespace {
 		std::unordered_map<QueueFamily, uint32_t> queueFamilyIndices;
 		std::unordered_map<QueueFamily, VkQueue> queues;
 		VkCommandPool cmdPool;
-		VkCommandBuffer cmdBuffer;
 
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
@@ -56,9 +64,8 @@ namespace {
 		VkPipelineLayout pipelineLayout;
 		VkRenderPass renderPass;
 
-		VkFence renderFinishFence;
-		VkSemaphore renderFinishSemaphore;
-		VkSemaphore imageAvaliableSemaphore;
+		static constexpr uint32_t FRAMES_IN_FLIGHT{ 2 };
+		std::array<FrameState, FRAMES_IN_FLIGHT> frames;
 	};
 
 	VulkanState* s_State{ nullptr };
@@ -80,6 +87,10 @@ void VulkanRenderer::init(SDL_Window* window) {
 	VkSurfaceKHR surface{};
 	SDL_Vulkan_CreateSurface(window, instance, &surface);
 
+	objectDeletionQueue.pushDeleter([=]() {
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+	});
+
 	VkPhysicalDevice pDevice{ findSuitablePhysicalDevice(instance, surface) };
 	std::unordered_map<QueueFamily, uint32_t> queueFamilyIndices{
 		getDeviceQueueIndices(pDevice, surface)
@@ -97,11 +108,9 @@ void VulkanRenderer::init(SDL_Window* window) {
 		pDevice, surface, &surfaceCapabilities
 	);
 
-	constexpr uint32_t FRAMES_IN_FLIGHT{ 2 };
-
-	SwapchainInfo swapchainInfo{
-		createSwapchain(pDevice, device, surface, window, FRAMES_IN_FLIGHT)
-	};
+	SwapchainInfo swapchainInfo{ createSwapchain(
+		pDevice, device, surface, window, VulkanState::FRAMES_IN_FLIGHT
+	) };
 
 	uint64_t swapchainDeleterHandle{ objectDeletionQueue.pushDeleter([=]() {
 		deleteSwapchain(
@@ -115,6 +124,38 @@ void VulkanRenderer::init(SDL_Window* window) {
 		vkGetDeviceQueue(device, index.second, 0, &queue);
 		queues[index.first] = queue;
 	}
+
+	VkDescriptorPoolSize dPoolSize{ .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+									.descriptorCount = 1 };
+
+	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		.maxSets = 1,
+		.poolSizeCount = 1,
+		.pPoolSizes = &dPoolSize
+	};
+
+	VkDescriptorPool descriptorPool{};
+	// vkCreateDescriptorPool(
+	// 	device, &descriptorPoolCreateInfo, nullptr, &descriptorPool
+	// );
+
+	VkDescriptorSetLayoutBinding setLayoutBinding{
+		.binding = 0,
+		.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		.descriptorCount = 1,
+		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+	};
+
+	VkDescriptorSetLayoutCreateInfo descriptorSetLayout{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+	};
+
+	VkDescriptorSetAllocateInfo dSetAllocInfo{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		.descriptorPool = descriptorPool,
+		.descriptorSetCount = 1,
+	};
 
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -339,7 +380,7 @@ void VulkanRenderer::init(SDL_Window* window) {
 	res = vkCreateGraphicsPipelines(
 		device, 0, 1, &pipelineCreateInfo, nullptr, &firstGraphicsPipeline
 	);
-	objectDeletionQueue.pushDeleter([&]() {
+	objectDeletionQueue.pushDeleter([=]() {
 		vkDestroyPipeline(device, firstGraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 		vkDestroyRenderPass(device, renderPass, nullptr);
@@ -356,7 +397,7 @@ void VulkanRenderer::init(SDL_Window* window) {
 	if (res != VK_SUCCESS) {
 		std::cout << "could not create command pool" << std::endl;
 	}
-	objectDeletionQueue.pushDeleter([&]() {
+	objectDeletionQueue.pushDeleter([=]() {
 		vkDestroyCommandPool(device, cmdPool, nullptr);
 	});
 
@@ -364,10 +405,45 @@ void VulkanRenderer::init(SDL_Window* window) {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.commandPool = cmdPool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = 1,
+		.commandBufferCount = VulkanState::FRAMES_IN_FLIGHT,
 	};
-	VkCommandBuffer cmdBuffer{};
-	vkAllocateCommandBuffers(device, &cmdBufferAllocInfo, &cmdBuffer);
+	std::array<FrameState, VulkanState::FRAMES_IN_FLIGHT> frames;
+	std::array<VkCommandBuffer, VulkanState::FRAMES_IN_FLIGHT> cmdBuffers;
+	vkAllocateCommandBuffers(device, &cmdBufferAllocInfo, cmdBuffers.data());
+
+	VkFenceCreateInfo fenceCreateInfo{ .sType =
+										   VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+									   .flags = VK_FENCE_CREATE_SIGNALED_BIT };
+	VkSemaphoreCreateInfo semaphoreCreateInfo{
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+	};
+
+	for (int i{}; i < VulkanState::FRAMES_IN_FLIGHT; i++) {
+		VkSemaphore renderFinishSemaphore{};
+		VkSemaphore imageAvaliableSemaphore{};
+		VkFence renderFinishFence{};
+		vkCreateFence(device, &fenceCreateInfo, nullptr, &renderFinishFence);
+		vkCreateSemaphore(
+			device, &semaphoreCreateInfo, nullptr, &imageAvaliableSemaphore
+		);
+		vkCreateSemaphore(
+			device, &semaphoreCreateInfo, nullptr, &renderFinishSemaphore
+		);
+
+		objectDeletionQueue.pushDeleter([=]() {
+			vkDestroyFence(device, renderFinishFence, nullptr);
+			vkDestroySemaphore(device, imageAvaliableSemaphore, nullptr);
+			vkDestroySemaphore(device, renderFinishSemaphore, nullptr);
+		});
+
+		FrameState fState{
+			.renderFinishFence = renderFinishFence,
+			.renderFinishSemaphore = renderFinishSemaphore,
+			.imageAvaliableSemaphore = imageAvaliableSemaphore,
+			.cmdBuffer = cmdBuffers[i],
+		};
+		frames[i] = fState;
+	}
 
 	if (res != VK_SUCCESS) {
 		std::cout << "could not create graphics pipeline" << std::endl;
@@ -396,7 +472,7 @@ void VulkanRenderer::init(SDL_Window* window) {
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 	) };
 
-	objectDeletionQueue.pushDeleter([&]() {
+	objectDeletionQueue.pushDeleter([=]() {
 		destroyBuffer(device, stagingBuffer);
 		destroyBuffer(device, vertexBuffer);
 	});
@@ -442,163 +518,140 @@ void VulkanRenderer::init(SDL_Window* window) {
 
 		framebuffers.emplace_back(framebuffer);
 	}
-	objectDeletionQueue.pushDeleter([&]() {
+	objectDeletionQueue.pushDeleter([=]() {
 		for (const auto& framebuffer : framebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
 		}
 	});
 
-	VkFenceCreateInfo fenceCreateInfo{ .sType =
-										   VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-									   .flags = VK_FENCE_CREATE_SIGNALED_BIT };
-	VkSemaphoreCreateInfo semaphoreCreateInfo{
-		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-	};
-
-	VkFence renderFinishFence{};  // for cmd buffer recording
-	VkSemaphore imageAvaliableSemaphore{};	// for color attachment
-	VkSemaphore renderFinishSemaphore{};  // for presentation
-
-	vkCreateFence(device, &fenceCreateInfo, nullptr, &renderFinishFence);
-	vkCreateSemaphore(
-		device, &semaphoreCreateInfo, nullptr, &imageAvaliableSemaphore
-	);
-	vkCreateSemaphore(
-		device, &semaphoreCreateInfo, nullptr, &renderFinishSemaphore
-	);
-
-	objectDeletionQueue.pushDeleter([&]() {
-		vkDestroyFence(device, renderFinishFence, nullptr);
-		vkDestroySemaphore(device, imageAvaliableSemaphore, nullptr);
-		vkDestroySemaphore(device, renderFinishSemaphore, nullptr);
-	});
-
 	vkDestroyShaderModule(device, vShaderModule, nullptr);
 	vkDestroyShaderModule(device, fShaderModule, nullptr);
 
-	s_State =
-		new VulkanState{ .instance = instance,
-						 .debugMessenger = debugMessenger,
-						 .objectDeletionQueue = objectDeletionQueue,
-						 .pDevice = pDevice,
-						 .device = device,
-						 .queueFamilyIndices = std::move(queueFamilyIndices),
-						 .queues = std::move(queues),
-						 .cmdPool = cmdPool,
-						 .cmdBuffer = cmdBuffer,
-						 .vertexBuffer = vertexBuffer.handle,
-						 .vertexBufferMemory = vertexBuffer.memory,
-						 .surface = surface,
-						 .swapchain = swapchainInfo.swapchain,
-						 .swapchainExtent = swapchainInfo.extent,
-						 .swapchainImageViews = swapchainInfo.imageViews,
-						 .framebuffers = framebuffers,
-						 .pipeline = firstGraphicsPipeline,
-						 .pipelineLayout = pipelineLayout,
-						 .renderPass = renderPass,
-						 .renderFinishFence = renderFinishFence,
-						 .renderFinishSemaphore = renderFinishSemaphore,
-						 .imageAvaliableSemaphore = imageAvaliableSemaphore };
+	s_State = new VulkanState{
+		.instance = instance,
+		.debugMessenger = debugMessenger,
+		.objectDeletionQueue = objectDeletionQueue,
+		.pDevice = pDevice,
+		.device = device,
+		.queueFamilyIndices = std::move(queueFamilyIndices),
+		.queues = std::move(queues),
+		.cmdPool = cmdPool,
+		.vertexBuffer = vertexBuffer.handle,
+		.vertexBufferMemory = vertexBuffer.memory,
+		.surface = surface,
+		.swapchain = swapchainInfo.swapchain,
+		.swapchainExtent = swapchainInfo.extent,
+		.swapchainImageViews = swapchainInfo.imageViews,
+		.framebuffers = framebuffers,
+		.pipeline = firstGraphicsPipeline,
+		.pipelineLayout = pipelineLayout,
+		.renderPass = renderPass,
+		.frames = frames,
+	};
 }
 
 void VulkanRenderer::renderFrame() {
 	uint32_t swapchainImageIndex{};
 	VkResult res{};
 
-	vkWaitForFences(
-		s_State->device, 1, &s_State->renderFinishFence, VK_TRUE, UINT64_MAX
-	);
-	vkResetFences(s_State->device, 1, &s_State->renderFinishFence);
+	for (size_t frameIndex{}; frameIndex < VulkanState::FRAMES_IN_FLIGHT;
+		 frameIndex++) {
+		FrameState& frame{ s_State->frames[frameIndex] };
+		vkWaitForFences(
+			s_State->device, 1, &frame.renderFinishFence, VK_TRUE, UINT64_MAX
+		);
+		vkResetFences(s_State->device, 1, &frame.renderFinishFence);
 
-	res = vkAcquireNextImageKHR(
-		s_State->device,
-		s_State->swapchain,
-		UINT64_MAX,
-		s_State->imageAvaliableSemaphore,
-		0,
-		&swapchainImageIndex
-	);
+		res = vkAcquireNextImageKHR(
+			s_State->device,
+			s_State->swapchain,
+			UINT64_MAX,
+			frame.imageAvaliableSemaphore,
+			0,
+			&swapchainImageIndex
+		);
 
-	VkRect2D renderArea{
-		.extent = s_State->swapchainExtent,
-	};
+		VkRect2D renderArea{
+			.extent = s_State->swapchainExtent,
+		};
 
-	VkClearValue clearValue{ { { 0.f, 0.f, 0.f, 1.f } } };
+		VkClearValue clearValue{ { { 0.f, 0.f, 0.f, 1.f } } };
 
-	VkRenderPassBeginInfo renderPassBeginInfo{
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.renderPass = s_State->renderPass,
-		.framebuffer = s_State->framebuffers[swapchainImageIndex],
-		.renderArea = renderArea,
-		.clearValueCount = 1,
-		.pClearValues = &clearValue,
-	};
-	VkCommandBufferBeginInfo cmdBufferBeginInfo{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-	};
+		VkRenderPassBeginInfo renderPassBeginInfo{
+			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+			.renderPass = s_State->renderPass,
+			.framebuffer = s_State->framebuffers[swapchainImageIndex],
+			.renderArea = renderArea,
+			.clearValueCount = 1,
+			.pClearValues = &clearValue,
+		};
+		VkCommandBufferBeginInfo cmdBufferBeginInfo{
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		};
 
-	vkBeginCommandBuffer(s_State->cmdBuffer, &cmdBufferBeginInfo);
-	vkCmdBeginRenderPass(
-		s_State->cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE
-	);
+		vkBeginCommandBuffer(frame.cmdBuffer, &cmdBufferBeginInfo);
+		vkCmdBeginRenderPass(
+			frame.cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE
+		);
 
-	VkDeviceSize offset[1]{ 0 };
-	vkCmdBindVertexBuffers(
-		s_State->cmdBuffer, 0, 1, &s_State->vertexBuffer, offset
-	);
+		VkDeviceSize offset[1]{ 0 };
+		vkCmdBindVertexBuffers(
+			frame.cmdBuffer, 0, 1, &s_State->vertexBuffer, offset
+		);
 
-	VkViewport viewport{ .width = (float)s_State->swapchainExtent.width,
-						 .height = (float)s_State->swapchainExtent.height,
-						 .minDepth = 0.f,
-						 .maxDepth = 1.f };
-	VkRect2D scissor{ .extent = s_State->swapchainExtent };
+		VkViewport viewport{ .width = (float)s_State->swapchainExtent.width,
+							 .height = (float)s_State->swapchainExtent.height,
+							 .minDepth = 0.f,
+							 .maxDepth = 1.f };
+		VkRect2D scissor{ .extent = s_State->swapchainExtent };
 
-	vkCmdSetViewport(s_State->cmdBuffer, 0, 1, &viewport);
-	vkCmdSetScissor(s_State->cmdBuffer, 0, 1, &scissor);
+		vkCmdSetViewport(frame.cmdBuffer, 0, 1, &viewport);
+		vkCmdSetScissor(frame.cmdBuffer, 0, 1, &scissor);
 
-	vkCmdBindPipeline(
-		s_State->cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_State->pipeline
-	);
+		vkCmdBindPipeline(
+			frame.cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_State->pipeline
+		);
 
-	vkCmdDraw(s_State->cmdBuffer, 3, 1, 0, 0);
+		vkCmdDraw(frame.cmdBuffer, 3, 1, 0, 0);
 
-	vkCmdEndRenderPass(s_State->cmdBuffer);
+		vkCmdEndRenderPass(frame.cmdBuffer);
 
-	vkEndCommandBuffer(s_State->cmdBuffer);
+		vkEndCommandBuffer(frame.cmdBuffer);
 
-	VkPipelineStageFlags pipelineStageFlags{
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
-	};
-	VkSubmitInfo submitInfo{
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &s_State->imageAvaliableSemaphore,
-		.pWaitDstStageMask = &pipelineStageFlags,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &s_State->cmdBuffer,
-		.signalSemaphoreCount = 1,
-		.pSignalSemaphores = &s_State->renderFinishSemaphore,
+		VkPipelineStageFlags pipelineStageFlags{
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+		};
+		VkSubmitInfo submitInfo{
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = &frame.imageAvaliableSemaphore,
+			.pWaitDstStageMask = &pipelineStageFlags,
+			.commandBufferCount = 1,
+			.pCommandBuffers = &frame.cmdBuffer,
+			.signalSemaphoreCount = 1,
+			.pSignalSemaphores = &frame.renderFinishSemaphore,
 
-	};
-	res = vkQueueSubmit(
-		s_State->queues[QueueFamily::graphics],
-		1,
-		&submitInfo,
-		s_State->renderFinishFence
-	);
+		};
+		res = vkQueueSubmit(
+			s_State->queues[QueueFamily::graphics],
+			1,
+			&submitInfo,
+			frame.renderFinishFence
+		);
 
-	VkPresentInfoKHR presentInfo{
-		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &s_State->renderFinishSemaphore,
-		.swapchainCount = 1,
-		.pSwapchains = &s_State->swapchain,
-		.pImageIndices = &swapchainImageIndex,
+		VkPresentInfoKHR presentInfo{
+			.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = &frame.renderFinishSemaphore,
+			.swapchainCount = 1,
+			.pSwapchains = &s_State->swapchain,
+			.pImageIndices = &swapchainImageIndex,
 
-	};
-	res = vkQueuePresentKHR(
-		s_State->queues[QueueFamily::presentation], &presentInfo
-	);
+		};
+		res = vkQueuePresentKHR(
+			s_State->queues[QueueFamily::presentation], &presentInfo
+		);
+	}
 }
 
 void VulkanRenderer::cleanup() {

@@ -1,0 +1,19 @@
+# ninja log v5
+36797	56904	1715170367044889034	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Device.cpp.o	b68089178c380a7b
+4	16782	1715565272596125752	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Renderer.cpp.o	61b1af92e0b6d693
+4	285	1715565057269128605	/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/shaders/First.frag.spv	145424ec0a55d80b
+16782	17405	1715565273212725611	VulkanRenderer	9f93dc901f34cced
+4	961	1715170541004391891	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Memory.cpp.o	fdd0c43ff59bf4f
+4	285	1715565057269128605	shaders/First.frag.spv	145424ec0a55d80b
+29122	51385	1715170361514612092	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Main.cpp.o	634c02429dff3573
+50052	53463	1715170363611388596	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Swapchain.cpp.o	b180ea5b0a57a1f9
+4	258	1715565194418845039	/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/shaders/First.vert.spv	714c5200681e263
+34631	36797	1715170346943648641	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/DeletionQueue.cpp.o	e69c726fb86725cc
+52769	54346	1715170364494766361	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Commands.cpp.o	fd23a8c1404ccb2d
+2	28553	1715170338680322430	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Logger.cpp.o	badf41f6babf4b22
+28554	50052	1715170360194539737	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Instance.cpp.o	4880de23beb87b85
+4	258	1715565194418845039	shaders/First.vert.spv	714c5200681e263
+53463	68583	1715170378718689976	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Layers.cpp.o	e8669828961e470f
+1	29122	1715170339260321468	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Extensions.cpp.o	c3d2dda8b084b839
+4	18100	1715565363520128538	CMakeFiles/VulkanRenderer.dir/VulkanRenderer/src/Renderer.cpp.o	61b1af92e0b6d693
+18100	18726	1715565364140215510	VulkanRenderer	9f93dc901f34cced
