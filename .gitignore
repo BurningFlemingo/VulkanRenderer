@@ -2,4 +2,7 @@ build
 build/**
 .cache
 .cache/**
-
+vcpkg_installed
+vcpkg_installed/**
+.vs
+.vs/**

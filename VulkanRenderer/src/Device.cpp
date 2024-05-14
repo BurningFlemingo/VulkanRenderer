@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include <vulkan/vulkan_core.h>
 #include <iostream>
+#include <set>
 
 #include <unordered_map>
 
@@ -110,7 +111,11 @@ VkDevice createLogicalDevice(
 	std::vector<float> prioritys(queueFamilyIndices.size(), 1.f);
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 
+	std::set<uint32_t> uniqueIndices;
 	for (const auto& queueFamily : queueFamilyIndices) {
+		if (uniqueIndices.contains(queueFamily.second)) {
+			continue;
+		}
 		VkDeviceQueueCreateInfo info{
 			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 			.queueFamilyIndex = queueFamily.second,
@@ -118,6 +123,7 @@ VkDevice createLogicalDevice(
 			.pQueuePriorities = prioritys.data()
 		};
 		queueCreateInfos.emplace_back(info);
+		uniqueIndices.insert(queueFamily.second);
 	}
 
 	VkDeviceCreateInfo deviceCreateInfo{
@@ -149,58 +155,48 @@ std::unordered_map<QueueFamily, uint32_t> getDeviceQueueIndices(
 		pDevice, &queueFamilyPropsCount, queueFamilyProps.data()
 	);
 
-	std::unordered_map<uint32_t, QueueFamily> queueIndicesMap;
-	std::unordered_map<QueueFamily, uint32_t> queueIndices;
+	bool graphicsQueueFound{};
+	bool presentationQueueFound{};
+	bool transferQueueFound{};
+	bool computeQueueFound{};
 
+	std::unordered_map<QueueFamily, uint32_t> queueFamilyToIndex;
 	for (uint32_t i{}; i < queueFamilyProps.size(); i++) {
 		VkQueueFamilyProperties& queueFamily{ queueFamilyProps[i] };
+
 		for (uint32_t j{}; j < queueFamily.queueCount; j++) {
-			auto itt{ std::ranges::find_if(
-				queueIndicesMap,
-				[](const auto& pair) {
-					return pair.second == QueueFamily::graphics;
-				}
-			) };
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT &&
-				itt == queueIndicesMap.end()) {
-				queueIndicesMap[i] = QueueFamily::graphics;
+				!graphicsQueueFound) {
+				queueFamilyToIndex[QueueFamily::graphics] = i;
+				graphicsQueueFound = true;
 				continue;
 			}
-			itt = std::ranges::find_if(queueIndicesMap, [](const auto& pair) {
-				return pair.second == QueueFamily::presentation;
-			});
+
 			VkBool32 presentationSupport{};
 			vkGetPhysicalDeviceSurfaceSupportKHR(
 				pDevice, i, surface, &presentationSupport
 			);
-			if (presentationSupport && itt == queueIndicesMap.end()) {
-				queueIndicesMap[i] = QueueFamily::presentation;
+			if (presentationSupport && !presentationQueueFound) {
+				queueFamilyToIndex[QueueFamily::presentation] = i;
+				presentationQueueFound = true;
 				continue;
 			}
-			itt = std::ranges::find_if(queueIndicesMap, [](const auto& pair) {
-				return pair.second == QueueFamily::compute;
-			});
 			if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT &&
-				itt == queueIndicesMap.end()) {
-				queueIndicesMap[i] = QueueFamily::compute;
+				!computeQueueFound) {
+				queueFamilyToIndex[QueueFamily::compute] = i;
+				computeQueueFound = true;
 				continue;
 			}
-			itt = std::ranges::find_if(queueIndicesMap, [](const auto& pair) {
-				return pair.second == QueueFamily::transfer;
-			});
 			if (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT &&
-				itt == queueIndicesMap.end()) {
-				queueIndicesMap[i] = QueueFamily::transfer;
+				!transferQueueFound) {
+				queueFamilyToIndex[QueueFamily::transfer] = i;
+				transferQueueFound = true;
 				continue;
 			}
 		}
 	}
 
-	for (const auto& queue : queueIndicesMap) {
-		queueIndices[queue.second] = queue.first;
-	}
-
-	return queueIndices;
+	return queueFamilyToIndex;
 }
 
 namespace {
@@ -230,7 +226,7 @@ namespace {
 				pDevice, i, surface, &queueSupportsSurface
 			);
 
-			surfaceSupported |= queueSupportsSurface;
+			surfaceSupported |= queueSupportsSurface != 0;
 
 			graphicsSupported |=
 				queueFamilys[i].queueFlags & VK_QUEUE_GRAPHICS_BIT;

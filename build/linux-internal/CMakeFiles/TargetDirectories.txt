@@ -1,4 +1,0 @@
-/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/CMakeFiles/build_shaders.dir
-/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/CMakeFiles/VulkanRenderer.dir
-/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/CMakeFiles/edit_cache.dir
-/home/unmeinks/Workspace/Dev/Projects/VulkanRenderer/build/linux-internal/CMakeFiles/rebuild_cache.dir

@@ -136,9 +136,12 @@ void VulkanRenderer::init(SDL_Window* window) {
 	};
 
 	VkDescriptorPool descriptorPool{};
-	// vkCreateDescriptorPool(
-	// 	device, &descriptorPoolCreateInfo, nullptr, &descriptorPool
-	// );
+	vkCreateDescriptorPool(
+		device, &descriptorPoolCreateInfo, nullptr, &descriptorPool
+	);
+	objectDeletionQueue.pushDeleter([=]() {
+		vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+	});
 
 	VkDescriptorSetLayoutBinding setLayoutBinding{
 		.binding = 0,
@@ -450,10 +453,11 @@ void VulkanRenderer::init(SDL_Window* window) {
 	}
 
 	Vertex vertexData[3]{
-		{ .pos = { -0.5f, 0.5f, 0.f }, .color = { 1.f, 0.f, 0.f } },
-		{ .pos = { 0.f, -0.5f, 0.f }, .color = { 0.f, 1.f, 0.f } },
-		{ .pos = { 0.5f, 0.5f, 0.f }, .color = { 0.f, 0.f, 1.f } },
+		{ .pos = { -0.5f, 0.6f, 1.f }, .color = { 1.f, 0.f, 0.f } },
+		{ .pos = { 0.f, -0.5f, 1.f }, .color = { 0.f, 1.f, 0.f } },
+		{ .pos = { 0.5f, 0.5f, 1.f }, .color = { 0.f, 0.f, 1.f } },
 	};
+
 	BufferInfo stagingBuffer{ createBuffer(
 		pDevice,
 		device,
